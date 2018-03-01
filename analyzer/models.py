@@ -64,11 +64,13 @@ class JobHandler(object):
     def apply_model(self, job_name, df, model, target, predictors, parameters,
                     uid, export_csv):
         logging.info('Applying model ' + str(model) + ' for job: ' + job_name)
+        self.model_df = pd.DataFrame()
         self.job_name = job_name
         df = self.df_col_to_type(df, target, predictors)
         self.model = self.models.get_model(model)
         self.get_unique_param_combinations(df, parameters)
         self.loop_all_combinations(df, target, predictors, parameters, uid)
+        print(df.head())
         self.add_const_to_df(job_name, model, target, predictors, parameters)
         if export_csv:
             self.export_model_df_to_csv(export_csv)
@@ -90,15 +92,19 @@ class JobHandler(object):
         df = self.group_df(df, target, predictors, parameters)
         df = df[df[target] != 0]
         if not df.empty:
+            min_date = df[predictors].min()
+            max_date = df[predictors].max()
             popt = self.compute_model(df, predictors, target, com)
-            self.add_model_row(com, uids, popt)
+            self.add_model_row(com, uids, popt, min_date, max_date)
 
-    def add_model_row(self, com, uids, popt):
+    def add_model_row(self, com, uids, popt, min_date, max_date):
         model_row = {'Specified Parameters': com,
                      'Unique Identifiers': uids,
                      'modelcoefa': popt[0],
                      'modelcoefb': popt[1],
-                     'modelcoefc': popt[2]}
+                     'modelcoefc': popt[2],
+                     'min_date': min_date,
+                     'max_date': max_date}
         self.model_df = self.model_df.append(model_row, ignore_index=True)
 
     @staticmethod
