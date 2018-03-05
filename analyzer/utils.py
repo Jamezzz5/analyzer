@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 import datetime as dt
@@ -26,3 +27,7 @@ def get_right_df(df, merge_col):
     df = df[[merge_col] + cols]
     df.columns = ([merge_col] + [x[:-2] for x in df.columns if x[-2:] == '_y'])
     return df
+
+def dir_check(directory):
+    if not os.path.isdir(directory):
+        os.makedirs(directory)

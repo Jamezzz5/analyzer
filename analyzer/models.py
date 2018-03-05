@@ -70,7 +70,6 @@ class JobHandler(object):
         self.model = self.models.get_model(model)
         self.get_unique_param_combinations(df, parameters)
         self.loop_all_combinations(df, target, predictors, parameters, uid)
-        print(df.head())
         self.add_const_to_df(job_name, model, target, predictors, parameters)
         if export_csv:
             self.export_model_df_to_csv(export_csv)

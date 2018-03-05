@@ -42,6 +42,7 @@ class Config(object):
 
     def loop(self):
         jh = mod.JobHandler()
+        utl.dir_check('plots')
         for key in self.keys:
             self.do_job(jh, key)
 
